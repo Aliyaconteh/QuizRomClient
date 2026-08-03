@@ -238,7 +238,9 @@ export default function CreateQuiz() {
 
   const [title, setTitle] = useState("");
   const [questions, setQuestions] = useState([emptyQuestion()]);
+  const [aiMode, setAiMode] = useState("document");
   const [aiFile, setAiFile] = useState(null);
+  const [aiTopic, setAiTopic] = useState("");
   const [aiQuestionCount, setAiQuestionCount] = useState(5);
   const [aiDifficulty, setAiDifficulty] = useState("Mixed");
   const [aiGenerating, setAiGenerating] = useState(false);
@@ -354,8 +356,13 @@ export default function CreateQuiz() {
   const generateQuizWithAI = async () => {
     setAiError("");
     setAiStatus("");
-    if (!aiFile) {
+    const topic = aiTopic.trim();
+    if (aiMode === "document" && !aiFile) {
       setAiError("Please upload a document first.");
+      return;
+    }
+    if (aiMode === "topic" && !topic) {
+      setAiError("Please enter a topic first.");
       return;
     }
     if (!aiQuestionCount || aiQuestionCount < 1 || aiQuestionCount > 50) {
@@ -364,11 +371,14 @@ export default function CreateQuiz() {
     }
 
     setAiGenerating(true);
-    setAiStatus("Uploading document and generating quiz...");
+    setAiStatus(aiMode === "document" ? "Uploading document and generating quiz..." : "Generating quiz from topic...");
 
     try {
       const formData = new FormData();
-      formData.append("document", aiFile);
+      if (aiFile) {
+        formData.append("document", aiFile);
+      }
+      formData.append("topic", topic);
       formData.append("numberOfQuestions", String(aiQuestionCount));
       formData.append("difficulty", aiDifficulty);
 
@@ -410,7 +420,9 @@ export default function CreateQuiz() {
   };
 
   const clearAITool = () => {
+    setAiMode("document");
     setAiFile(null);
+    setAiTopic("");
     setAiQuestionCount(5);
     setAiDifficulty("Mixed");
     setAiStatus("");
@@ -501,7 +513,7 @@ export default function CreateQuiz() {
               <div>
                 <p className="text-sm font-semibold text-slate-200">Generate with AI</p>
                 <p className="text-xs text-slate-500 mt-1">
-                  Upload a document and create a quiz automatically
+                  Upload a document or enter a topic and create a quiz automatically
                 </p>
               </div>
             </div>
@@ -514,18 +526,50 @@ export default function CreateQuiz() {
             </button>
           </div>
 
+          <div className="mb-4 flex flex-wrap items-center gap-3">
+            <div className="inline-flex rounded-2xl border border-slate-800 bg-slate-950/40 p-1">
+              <button
+                type="button"
+                onClick={() => setAiMode("document")}
+                className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${aiMode === "document" ? "bg-indigo-500/15 text-indigo-300" : "text-slate-400 hover:text-slate-200"}`}
+              >
+                Upload file
+              </button>
+              <button
+                type="button"
+                onClick={() => setAiMode("topic")}
+                className={`rounded-xl px-4 py-2 text-sm font-semibold transition ${aiMode === "topic" ? "bg-indigo-500/15 text-indigo-300" : "text-slate-400 hover:text-slate-200"}`}
+              >
+                Topic only
+              </button>
+            </div>
+            <p className="text-xs text-slate-500">
+              Use a study file, or let the AI generate questions from a topic like a chapter, concept, or subject.
+            </p>
+          </div>
+
           <div className="grid gap-4 sm:grid-cols-2 mb-4">
-            <div>
+            <div className={aiMode === "topic" ? "sm:col-span-2" : ""}>
               <label className="text-xs font-semibold text-slate-400 mb-1.5 flex items-center gap-1.5">
-                <Upload size={12} />
-                Document
+                {aiMode === "document" ? <Upload size={12} /> : <FileText size={12} />}
+                {aiMode === "document" ? "Document" : "Topic / focus area"}
               </label>
-              <input
-                type="file"
-                accept=".pdf,.docx,.txt"
-                onChange={(e) => setAiFile(e.target.files?.[0] || null)}
-                className={inputClass(false)}
-              />
+              {aiMode === "document" ? (
+                <input
+                  type="file"
+                  accept=".pdf,.docx,.txt"
+                  onChange={(e) => setAiFile(e.target.files?.[0] || null)}
+                  className={inputClass(false)}
+                />
+              ) : (
+                <textarea
+                  rows="4"
+                  value={aiTopic}
+                  onChange={(e) => setAiTopic(e.target.value)}
+                  className={`${inputClass(false)} resize-none`}
+                  placeholder="e.g. Photosynthesis, quadratic equations, Python lists, or World War II causes"
+                />
+              )}
             </div>
             <div>
               <label className="text-xs font-semibold text-slate-400 mb-1.5 flex items-center gap-1.5">
@@ -557,7 +601,7 @@ export default function CreateQuiz() {
                 <option value="Hard">Hard</option>
               </select>
             </div>
-            <div className="flex items-end">
+            <div className="flex items-end sm:col-span-2">
               <MotionButton
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}

@@ -15,6 +15,7 @@ import SyncAnalysis from "../features/sync/pages/SyncAnalysis";
 import Leaderboard from "../features/leaderboard/pages/Leaderboard";
 import QuizList from "../features/quizzes/pages/QuizList";
 import CreateQuiz from "../features/quizzes/pages/CreateQuiz";
+import AIPractice from "../features/ai/pages/AIPractice";
 
 export default function AppRoutes() {
   return (
@@ -66,6 +67,8 @@ export default function AppRoutes() {
         <Route path="/quizzes" element={<RequireAuth><QuizList /></RequireAuth>} />
 
         <Route path="/quizzes/create" element={<RequireAuth><CreateQuiz /></RequireAuth>} />
+
+        <Route path="/ai-practice" element={<RequireAuth><AIPractice /></RequireAuth>} />
 
           <Route path="*" element={<Navigate to="/" replace />} />
 

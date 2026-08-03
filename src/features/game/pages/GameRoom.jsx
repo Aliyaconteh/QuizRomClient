@@ -31,6 +31,8 @@ export default function GameRoom() {
   const [error, setError] = useState("");
   const [mounted, setMounted] = useState(false);
   const [questionKey, setQuestionKey] = useState(0);
+  const [leaderboardPhase, setLeaderboardPhase] = useState(false);
+  const [answerResults, setAnswerResults] = useState({});
   const { addToast } = useToast();
 
   const username = useMemo(() => localStorage.getItem("username") || "Guest", []);
@@ -47,6 +49,8 @@ export default function GameRoom() {
     socket.emit("game:join", { roomCode, username, playerId });
 
     const handleQuestion = (data) => {
+      setLeaderboardPhase(false);
+      setAnswerResults({});
       setCurrentQuestion(data.question);
       setQuestionNumber(data.questionNumber || 1);
       setTotalQuestions(data.totalQuestions || 0);
@@ -59,14 +63,12 @@ export default function GameRoom() {
 
     const handleTimer = (data) => setTimeRemaining(data.time);
     const handleLeaderboard = (data) => setLeaderboard(data.players || data.leaderboard || []);
+    const handleAnswerResult = () => {};
+    const handleQuestionEnded = (data) => { setLeaderboard(data.leaderboard || []); setLeaderboardPhase(true); };
 
-    const handleConfirmed = (data) => {
-      setAnswerStatus(data.isCorrect ? "correct" : "incorrect");
-      setFeedback(
-        data.isCorrect
-          ? `Correct! +${data.pointsAwarded} points`
-          : "Not quite. Your answer was recorded."
-      );
+    const handleConfirmed = () => {
+      setAnswerStatus("submitted");
+      setFeedback("Answer submitted.");
       setQuestionsAnswered((count) => count + 1);
     };
 
@@ -90,6 +92,9 @@ export default function GameRoom() {
     socket.on("game:question", handleQuestion);
     socket.on("game:timer", handleTimer);
     socket.on("game:leaderboard", handleLeaderboard);
+    socket.on("leaderboardUpdated", handleLeaderboard);
+    socket.on("answerResult", handleAnswerResult);
+    socket.on("questionEnded", handleQuestionEnded);
     socket.on("leaderboard-update", handleLeaderboard);
     socket.on("answer_confirmed", handleConfirmed);
     socket.on("submission_rejected", handleRejected);
@@ -100,6 +105,9 @@ export default function GameRoom() {
       socket.off("game:question", handleQuestion);
       socket.off("game:timer", handleTimer);
       socket.off("game:leaderboard", handleLeaderboard);
+      socket.off("leaderboardUpdated", handleLeaderboard);
+      socket.off("answerResult", handleAnswerResult);
+      socket.off("questionEnded", handleQuestionEnded);
       socket.off("leaderboard-update", handleLeaderboard);
       socket.off("answer_confirmed", handleConfirmed);
       socket.off("submission_rejected", handleRejected);
@@ -122,7 +130,7 @@ export default function GameRoom() {
     socket.emit("game:answer", {
       roomCode,
       questionId: currentQuestion.id,
-      answer,
+      selectedOption: answer,
       username,
       playerId,
       clientTimestamp: new Date().getTime(),
@@ -135,8 +143,8 @@ export default function GameRoom() {
   const timerBg = timerValue > 10 ? "bg-blue-500/10 border-blue-500/30" : timerValue > 5 ? "bg-amber-500/10 border-amber-500/30" : "bg-red-500/10 border-red-500/30";
   const progressPct = totalQuestions > 0 ? (questionNumber / totalQuestions) * 100 : 0;
 
-  const feedbackIcon = answerStatus === "correct" ? <CheckCircle size={18} className="text-emerald-400" /> : answerStatus === "incorrect" ? <XCircle size={18} className="text-red-400" /> : answerStatus === "rejected" ? <AlertCircle size={18} className="text-amber-400" /> : null;
-  const feedbackBg = answerStatus === "correct" ? "bg-emerald-500/10 border-emerald-500/20" : answerStatus === "incorrect" ? "bg-red-500/10 border-red-500/20" : answerStatus === "rejected" ? "bg-amber-500/10 border-amber-500/20" : "bg-slate-800 border-slate-700";
+  const feedbackIcon = answerStatus === "rejected" ? <AlertCircle size={18} className="text-amber-400" /> : null;
+  const feedbackBg = answerStatus === "rejected" ? "bg-amber-500/10 border-amber-500/20" : "bg-slate-800 border-slate-700";
 
   return (
     <div
@@ -186,7 +194,7 @@ export default function GameRoom() {
             </div>
           )}
 
-          {currentQuestion ? (
+          {leaderboardPhase ? (<div className="py-12"><ScoreBoard players={leaderboard || []} /></div>) : currentQuestion ? (
             <div key={questionKey} style={{ animation: "slideUp 0.4s ease both" }}>
               <div className="mb-8">
                 <p className="text-slate-500 text-sm mb-2 font-medium">Answered: {questionsAnswered}</p>
@@ -198,9 +206,10 @@ export default function GameRoom() {
               <div className="grid sm:grid-cols-2 gap-4">
                 {currentQuestion.options.map((option, idx) => {
                   const isSelected = selectedAnswer === option;
-                  const isDisabled = Number(timeRemaining || 0) <= 0 || ["pending", "correct", "incorrect"].includes(answerStatus);
-                  const showCorrect = answerStatus === "correct" && isSelected;
-                  const showWrong = answerStatus === "incorrect" && isSelected;
+                  const isDisabled = Number(timeRemaining || 0) <= 0 || ["pending", "submitted"].includes(answerStatus);
+                  const result = answerResults[option];
+                  const showCorrect = false;
+                  const showWrong = false;
 
                   let optionStyle = "bg-slate-800/60 border-slate-700/50 hover:border-indigo-500/60 hover:bg-slate-800";
                   if (isSelected && answerStatus === "pending") optionStyle = "bg-indigo-500/15 border-indigo-500/50";
@@ -267,3 +276,7 @@ export default function GameRoom() {
     </div>
   );
 }
+
+
+
+

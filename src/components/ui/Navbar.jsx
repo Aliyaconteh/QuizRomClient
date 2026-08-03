@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Home, DoorOpen, Plus, Trophy, Sparkles, Sun, Moon, BookOpen, LogIn } from "lucide-react";
+import { Home, DoorOpen, Plus, Trophy, Sun, Moon, BookOpen, LogIn } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import UserMenu from "./UserMenu";
@@ -13,7 +13,7 @@ const hostDesktopLinks = [
 ];
 
 // Mobile links exclude "Create Quiz" — it gets its own big FAB-style button in the center.
-// 4 links total so they split evenly: 2 on the left, 2 on the right of the FAB.
+// Keep the mobile list balanced around the FAB.
 const hostMobileLinks = [
   { to: "/",            label: "Home",       icon: Home },
   { to: "/quizzes",     label: "Quizzes",    icon: BookOpen },
@@ -25,6 +25,7 @@ const guestMainLinks = [
   { to: "/",            label: "Home",       icon: Home },
   { to: "/quizzes",     label: "Quizzes",    icon: BookOpen },
   { to: "/join-room",   label: "Join",       icon: DoorOpen },
+ 
   { to: "/leaderboard", label: "Scores",     icon: Trophy },
 ];
 
@@ -83,13 +84,13 @@ export default function Navbar() {
             <NavLink
               to="/"
               className="flex items-center gap-2 group shrink-0"
-              aria-label="Djinn Home"
+              aria-label="QuizRoom Home"
             >
-              <div className="p-1.5 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 group-hover:shadow-md group-hover:shadow-purple-500/25 transition-shadow duration-300">
-                <Sparkles size={17} className="text-white" />
+              <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg border border-slate-700/80 bg-slate-900/90 group-hover:shadow-md group-hover:shadow-purple-500/25 transition-shadow duration-300">
+                <img src="/logo.png" alt="QuizRoom logo" className="h-full w-full object-contain p-0.5" />
               </div>
               <span className="hidden sm:inline text-base font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                Djinn
+                QuizRoom
               </span>
             </NavLink>
 

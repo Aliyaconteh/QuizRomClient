@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "./ToastContext";
-import { ChevronDown, LogOut, Plus, Activity, UserCircle, } from "lucide-react";
+import { ChevronDown, LogOut, Plus, Activity, UserCircle, Sparkles } from "lucide-react";
 
 export default function UserMenu() {
   const { user, logout } = useAuth();
@@ -86,6 +86,14 @@ export default function UserMenu() {
             >
               <Activity size={15} />
               <span>Analysis</span>
+            </button>
+
+            <button
+              onClick={() => { navigate("/ai-practice"); setOpen(false); }}
+              className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-slate-300 hover:text-white hover:bg-slate-800 transition-all duration-150 text-sm"
+            >
+              <Sparkles size={15} />
+              <span>AI Tutor</span>
             </button>
 
             <div className="border-t border-slate-700/50 my-1" />

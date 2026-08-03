@@ -48,6 +48,13 @@ const workflows = [
     icon: Trophy,
     action: "View scores",
   },
+  {
+    title: "Practice with AI",
+    text: "Open a private tutor chat for doubts, explanations, and step-by-step practice questions.",
+    path: "/ai-practice",
+    icon: Sparkles,
+    action: "Open tutor",
+  },
 ];
 
 const features = [
@@ -173,7 +180,7 @@ export default function Home() {
         >
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/90 px-4 py-2 text-sm font-semibold text-slate-200 backdrop-blur-sm">
             <Sparkles size={16} className="text-indigo-300" aria-hidden="true" />
-            Welcome to Djinn
+            Welcome to QuizRoom
           </div>
 
           <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
