@@ -1,4 +1,4 @@
-const LIVE_API_URL = "https://quizroomserver.onrender.com";
+const LIVE_API_URL = import.meta.env.VITE_SOCKET_URL;
 const LOCAL_API_URL = "http://localhost:5000";
 
 const browserApiUrl = () => {
