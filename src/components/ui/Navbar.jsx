@@ -32,6 +32,41 @@ const guestMainLinks = [
 const guestAuthLink = { to: "/signin", label: "Sign In", icon: LogIn };
 const hostFabLink = { to: "/quizzes/create", label: "Create Quiz" };
 
+function MobileNavButton({ to, label, Icon, isActive }) {
+  const [showLabel, setShowLabel] = useState(false);
+
+  return (
+    <NavLink
+      to={to}
+      title={label}
+      aria-label={label}
+      onPointerDown={() => setShowLabel(true)}
+      onPointerUp={() => setShowLabel(false)}
+      onPointerLeave={() => setShowLabel(false)}
+      onPointerCancel={() => setShowLabel(false)}
+      onTouchStart={() => setShowLabel(true)}
+      onTouchEnd={() => setShowLabel(false)}
+      className={({ isActive: active }) =>
+        `group relative inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-full border border-slate-700 bg-slate-900/95 text-slate-200 shadow-sm transition-all duration-200 ${
+          active || isActive
+            ? "border-indigo-500/60 bg-indigo-500/15 text-indigo-300 shadow-indigo-500/20"
+            : "hover:border-indigo-500/60 hover:bg-slate-800/95 hover:text-white"
+        }`
+      }
+    >
+      <Icon size={18} className="shrink-0" aria-hidden="true" />
+      <span className="sr-only">{label}</span>
+      <span
+        className={`pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-full bg-slate-900 px-2 py-1 text-[10px] font-medium text-slate-200 shadow-lg shadow-slate-950/40 transition-all duration-150 ${
+          showLabel ? "translate-y-0 opacity-100" : "translate-y-1 opacity-0"
+        }`}
+      >
+        {label}
+      </span>
+    </NavLink>
+  );
+}
+
 export default function Navbar() {
   const { isAuthenticated, theme, setTheme } = useAuth();
   const links = isAuthenticated ? hostDesktopLinks : guestMainLinks;
@@ -151,31 +186,13 @@ export default function Navbar() {
         }`}
       >
         <div
-          className={`mx-auto max-w-7xl px-4 py-3.5 sm:py-4 flex items-center gap-4 sm:gap-6 overflow-x-auto ${
+          className={`mx-auto flex max-w-7xl items-center gap-2 px-3 py-2.5 sm:gap-3 sm:px-4 ${
             isAuthenticated ? "justify-between" : "justify-center"
           }`}
         >
           {/* First half of links */}
           {mobileLinks.slice(0, Math.ceil(mobileLinks.length / 2)).map(({ to, label, icon: Icon }) => (
-            <NavLink
-              key={to}
-              to={to}
-              title={label}
-              aria-label={label}
-              className={({ isActive }) =>
-                `group relative inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-slate-700 bg-slate-900/95 text-slate-200 shadow-sm transition-all duration-200 ${
-                  isActive
-                    ? "border-indigo-500/60 bg-indigo-500/15 text-indigo-300 shadow-indigo-500/20"
-                    : "hover:border-indigo-500/60 hover:bg-slate-800/95 hover:text-white"
-                }`
-              }
-            >
-              <Icon size={20} className="shrink-0" aria-hidden="true" />
-              <span className="sr-only">{label}</span>
-              <span className="pointer-events-none absolute bottom-full mb-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-slate-900 px-2 py-1 text-[11px] text-slate-200 opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus:opacity-100 group-active:opacity-100 group-active:duration-0">
-                {label}
-              </span>
-            </NavLink>
+            <MobileNavButton key={to} to={to} label={label} Icon={Icon} isActive={false} />
           ))}
 
           {/* Big centered "Host a Quiz" FAB */}
@@ -184,11 +201,11 @@ export default function Navbar() {
               to={hostFabLink.to}
               title={hostFabLink.label}
               aria-label={hostFabLink.label}
-              className="group relative -mt-6 inline-flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-lg shadow-purple-500/30 ring-4 ring-slate-950 transition-transform duration-200 hover:scale-105 active:scale-95"
+              className="group relative -mt-5 inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-500 to-purple-600 text-white shadow-lg shadow-purple-500/30 ring-4 ring-slate-950 transition-transform duration-200 hover:scale-105 active:scale-95"
             >
-              <Plus size={28} strokeWidth={2.5} aria-hidden="true" />
+              <Plus size={24} strokeWidth={2.5} aria-hidden="true" />
               <span className="sr-only">{hostFabLink.label}</span>
-              <span className="pointer-events-none absolute bottom-full mb-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-slate-900 px-2 py-1 text-[11px] text-slate-200 opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus:opacity-100 group-active:opacity-100 group-active:duration-0">
+              <span className="pointer-events-none absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-full bg-slate-900 px-2 py-1 text-[10px] font-medium text-slate-200 opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-active:opacity-100">
                 {hostFabLink.label}
               </span>
             </NavLink>
@@ -196,25 +213,7 @@ export default function Navbar() {
 
           {/* Second half of links */}
           {mobileLinks.slice(Math.ceil(mobileLinks.length / 2)).map(({ to, label, icon: Icon }) => (
-            <NavLink
-              key={to}
-              to={to}
-              title={label}
-              aria-label={label}
-              className={({ isActive }) =>
-                `group relative inline-flex h-14 w-14 shrink-0 items-center justify-center rounded-full border border-slate-700 bg-slate-900/95 text-slate-200 shadow-sm transition-all duration-200 ${
-                  isActive
-                    ? "border-indigo-500/60 bg-indigo-500/15 text-indigo-300 shadow-indigo-500/20"
-                    : "hover:border-indigo-500/60 hover:bg-slate-800/95 hover:text-white"
-                }`
-              }
-            >
-              <Icon size={20} className="shrink-0" aria-hidden="true" />
-              <span className="sr-only">{label}</span>
-              <span className="pointer-events-none absolute bottom-full mb-2 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-slate-900 px-2 py-1 text-[11px] text-slate-200 opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-focus:opacity-100 group-active:opacity-100 group-active:duration-0">
-                {label}
-              </span>
-            </NavLink>
+            <MobileNavButton key={to} to={to} label={label} Icon={Icon} isActive={false} />
           ))}
         </div>
       </nav>
