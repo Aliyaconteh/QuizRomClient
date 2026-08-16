@@ -1,6 +1,6 @@
-# QuizRoom Frontend
+# KuizRoom Frontend
 
-React/Vite client for the QuizRoom final project.
+React/Vite client for the KuizRoom final project.
 
 Main flows:
 - Create Quiz: build quiz questions, options, correct answers, and timers.

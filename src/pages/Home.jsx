@@ -180,7 +180,7 @@ export default function Home() {
         >
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/90 px-4 py-2 text-sm font-semibold text-slate-200 backdrop-blur-sm">
             <Sparkles size={16} className="text-indigo-300" aria-hidden="true" />
-            Welcome to QuizRoom
+            Welcome to KuizRoom
           </div>
 
           <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
@@ -205,15 +205,7 @@ export default function Home() {
             >
               Create Quiz
             </MotionButton>
-            <MotionButton
-              onClick={handleNavigation("/create-room")}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.97 }}
-              className="rounded-full border border-slate-700 bg-slate-900/90 px-6 py-3 font-bold text-slate-200 backdrop-blur-sm transition-colors duration-200 hover:border-indigo-500/60 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70"
-              aria-label="Host a new live room"
-            >
-              Host Room
-            </MotionButton>
+           
             <MotionButton
               onClick={handleNavigation("/join-room")}
               whileHover={{ scale: 1.05 }}

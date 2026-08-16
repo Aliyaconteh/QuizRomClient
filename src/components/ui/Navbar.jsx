@@ -119,13 +119,13 @@ export default function Navbar() {
             <NavLink
               to="/"
               className="flex items-center gap-2 group shrink-0"
-              aria-label="QuizRoom Home"
+              aria-label="KuizRoom Home"
             >
               <div className="flex h-8 w-8 items-center justify-center overflow-hidden rounded-lg border border-slate-700/80 bg-slate-900/90 group-hover:shadow-md group-hover:shadow-purple-500/25 transition-shadow duration-300">
-                <img src="/logo.png" alt="QuizRoom logo" className="h-full w-full object-contain p-0.5" />
+                <img src="/logo.png" alt="KuizRoom logo" className="h-full w-full object-contain p-0.5" />
               </div>
               <span className="hidden sm:inline text-base font-bold bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-                QuizRoom
+                KuizRoom
               </span>
             </NavLink>
 

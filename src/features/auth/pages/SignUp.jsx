@@ -113,7 +113,7 @@ export default function SignUp() {
         >
           {/* Heading */}
           <h1 className={`text-[1.7rem] font-extrabold text-center leading-tight ${theme === "dark" ? "text-slate-100" : "text-[#16213E]"}`}>
-            Join QuizRoom
+            Join KuizRoom
           </h1>
           <p className="text-sm text-slate-400 text-center mt-1.5 mb-6">
             Create your account to start hosting quizzes

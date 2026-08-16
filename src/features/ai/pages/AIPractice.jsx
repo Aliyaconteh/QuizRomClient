@@ -14,8 +14,8 @@ const starterMessages = [
 ];
 
 
-const CHAT_STORAGE_KEY = "quizroom_ai_practice_chat";
-const CHAT_DRAFT_KEY = "quizroom_ai_practice_draft";
+const CHAT_STORAGE_KEY = "kuizroom_ai_practice_chat";
+const CHAT_DRAFT_KEY = "kuizroom_ai_practice_draft";
 
 const fadeUp = {
   hidden: { opacity: 0, y: 18 },
@@ -238,7 +238,7 @@ export default function AIPractice() {
                     <div className={`flex max-w-[min(100%,42rem)] gap-3 ${message.role === "user" ? "flex-row-reverse" : "flex-row"}`}>
                       {message.role === "assistant" && (
                         <div className="mt-1 flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-700 bg-slate-900/90">
-                          <img src="/logo.png" alt="QuizRoom" className="h-full w-full object-contain p-1" />
+                          <img src="/logo.png" alt="KuizRoom" className="h-full w-full object-contain p-1" />
                         </div>
                       )}
 
@@ -265,7 +265,7 @@ export default function AIPractice() {
               <div className="flex justify-start">
                   <div className="flex items-start gap-3 rounded-3xl border border-slate-700/70 bg-slate-900/90 px-4 py-3 text-sm text-slate-300 shadow-lg">
                     <div className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full border border-slate-700 bg-slate-950/90">
-                      <img src="/logo.png" alt="QuizRoom loading" className="h-full w-full object-contain p-1" />
+                      <img src="/logo.png" alt="KuizRoom loading" className="h-full w-full object-contain p-1" />
                     </div>
                     <div>
                       <div className="mb-1 text-[0.65rem] font-semibold uppercase tracking-[0.18em] text-slate-500">
@@ -303,7 +303,7 @@ export default function AIPractice() {
                       sendMessage();
                     }
                   }}
-                  placeholder="Message QuizRoom Tutor..."
+                  placeholder="Message KuizRoom Tutor..."
                   className="min-h-[42px] flex-1 resize-none border-0 bg-transparent px-2.5 py-2.5 text-[14px] leading-6 text-white outline-none placeholder:text-slate-500"
                 />
 

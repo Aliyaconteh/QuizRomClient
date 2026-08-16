@@ -3,8 +3,8 @@ import { createContext, useState, useContext, useCallback, useEffect } from "rea
 import { apiUrl } from "../config/api";
 
 const AuthContext = createContext();
-const STORAGE_KEY = "quizroom_host_auth";
-const THEME_STORAGE_KEY = "quizroom_host_theme";
+const STORAGE_KEY = "kuizroom_host_auth";
+const THEME_STORAGE_KEY = "kuizroom_host_theme";
 
 const getStoredTheme = () => {
   if (typeof window === "undefined") return "dark";

@@ -85,7 +85,7 @@ export default function SyncAnalysis() {
             </span>
           </h1>
           <p className="text-slate-400 mt-3 max-w-2xl text-sm leading-relaxed">
-            Compare the two synchronization models implemented in QuizRoom. Each strategy makes different trade-offs
+            Compare the two synchronization models implemented in KuizRoom. Each strategy makes different trade-offs
             between responsiveness and consistency.
           </p>
         </div>
