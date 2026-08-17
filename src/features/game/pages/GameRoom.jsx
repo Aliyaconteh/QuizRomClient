@@ -153,7 +153,7 @@ export default function GameRoom() {
       <div className="absolute w-[520px] h-[520px] rounded-full bg-indigo-500/6 blur-[90px] -top-32 -right-36 pointer-events-none" />
       <div className="absolute w-[380px] h-[380px] rounded-full bg-violet-500/6 blur-[80px] -bottom-20 -left-16 pointer-events-none" />
 
-      <div className={`max-w-6xl mx-auto ${leaderboardPhase ? "grid grid-cols-1" : "grid lg:grid-cols-[1fr_320px]"} gap-6 relative`}>
+      <div className="max-w-6xl mx-auto grid grid-cols-1 gap-6 relative">
         <main className="bg-[#0d131c]/80 border border-slate-800 rounded-2xl p-6 md:p-8">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -265,12 +265,6 @@ export default function GameRoom() {
             </div>
           )}
         </main>
-
-        {!leaderboardPhase && (
-          <aside className="bg-[#0d131c]/80 border border-slate-800 rounded-2xl p-6 max-h-[400px] lg:max-h-none overflow-y-auto">
-            <ScoreBoard players={leaderboard || []} />
-          </aside>
-        )}
       </div>
     </div>
   );
