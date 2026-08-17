@@ -54,14 +54,14 @@ const QuizCard = memo(function QuizCard({
         <button
           onClick={() => onDelete(quiz)}
           disabled={deletingId === quiz.id}
-          className="h-10 w-10 shrink-0 flex items-center justify-center rounded-xl bg-red-950/50 text-red-300 border border-red-900/50 hover:bg-red-900/70 hover:border-red-700 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
+          className="h-10 w-10 shrink-0 flex items-center justify-center rounded-xl bg-red-600 text-white border-2 border-red-700 shadow-sm shadow-red-900/30 hover:bg-red-700 hover:border-red-800 disabled:opacity-60 disabled:cursor-not-allowed transition-colors"
           title={`Delete ${quiz.title}`}
           aria-label={`Delete ${quiz.title}`}
         >
           {deletingId === quiz.id ? (
             <Loader2 className="h-4 w-4 animate-spin" />
           ) : (
-            <Trash2 className="h-4 w-4" />
+            <Trash2 className="h-[18px] w-[18px]" strokeWidth={3} />
           )}
         </button>
       </div>
@@ -277,20 +277,20 @@ export default function QuizList() {
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ type: "spring", damping: 20, stiffness: 300 }}
-              className="relative z-10 w-full max-w-sm sm:max-w-md bg-[#0d131c] border border-slate-800 rounded-2xl p-5 sm:p-6 shadow-2xl"
+              className="relative z-10 w-full max-w-sm sm:max-w-md bg-[#ff0000] border border-[#ff0000] rounded-2xl p-5 sm:p-6 shadow-2xl"
             >
-              <div className="flex items-start gap-3 mb-3 sm:mb-4">
-                <div className="w-10 h-10 rounded-xl bg-red-500/10 border border-red-500/20 flex items-center justify-center shrink-0">
-                  <AlertTriangle size={18} className="text-red-400" />
+              <div className="flex items-start gap-3 mb-3 sm:mb-4 rounded-xl bg-[#ff0000]/10 border border-[#ff0000]/30 p-3">
+                <div className="w-10 h-10 rounded-xl bg-[#ff0000] border border-[#ff0000] flex items-center justify-center shrink-0">
+                  <AlertTriangle size={18} className="text-white" />
                 </div>
                 <div>
-                  <h3 className="text-base sm:text-lg font-bold">Delete Quiz?</h3>
-                  <p className="text-sm text-slate-400 mt-1 break-words">
+                  <h3 className="text-base sm:text-lg font-bold text-white">Delete Quiz?</h3>
+                  <p className="text-sm text-red-100 mt-1 break-words">
                     "{confirmDeleteQuiz.title}"
                   </p>
                 </div>
               </div>
-              <p className="text-sm text-slate-400 mb-5 sm:mb-6">
+              <p className="text-sm text-red-100 mb-5 sm:mb-6">
                 This will permanently remove the quiz and all its questions.
                 This action cannot be undone.
               </p>
@@ -304,7 +304,7 @@ export default function QuizList() {
                 <button
                   onClick={handleConfirmDelete}
                   disabled={deletingId === confirmDeleteQuiz.id}
-                  className="rounded-xl bg-red-600 hover:bg-red-500 px-4 py-2.5 text-sm font-bold flex items-center gap-2 disabled:opacity-60 transition"
+                  className="rounded-xl bg-[#ff0000] hover:bg-[#e60000] px-4 py-2.5 text-sm font-bold flex items-center gap-2 disabled:opacity-60 transition text-white"
                 >
                   {deletingId === confirmDeleteQuiz.id ? (
                     <Loader2 className="h-4 w-4 animate-spin" />

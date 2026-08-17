@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { CheckCircle, XCircle, AlertCircle, Clock, Flag } from "lucide-react";
+import { AlertCircle, Clock, Flag } from "lucide-react";
 import { socket } from "../../../services/socket/socket";
 import ScoreBoard from "../../../components/game/ScoreBoard";
 import { useGame } from "../../../context/GameContext";
@@ -32,7 +32,6 @@ export default function GameRoom() {
   const [mounted, setMounted] = useState(false);
   const [questionKey, setQuestionKey] = useState(0);
   const [leaderboardPhase, setLeaderboardPhase] = useState(false);
-  const [answerResults, setAnswerResults] = useState({});
   const { addToast } = useToast();
 
   const username = useMemo(() => localStorage.getItem("username") || "Guest", []);
@@ -50,7 +49,6 @@ export default function GameRoom() {
 
     const handleQuestion = (data) => {
       setLeaderboardPhase(false);
-      setAnswerResults({});
       setCurrentQuestion(data.question);
       setQuestionNumber(data.questionNumber || 1);
       setTotalQuestions(data.totalQuestions || 0);
@@ -155,7 +153,7 @@ export default function GameRoom() {
       <div className="absolute w-[520px] h-[520px] rounded-full bg-indigo-500/6 blur-[90px] -top-32 -right-36 pointer-events-none" />
       <div className="absolute w-[380px] h-[380px] rounded-full bg-violet-500/6 blur-[80px] -bottom-20 -left-16 pointer-events-none" />
 
-      <div className="max-w-6xl mx-auto grid lg:grid-cols-[1fr_320px] gap-6 relative">
+      <div className={`max-w-6xl mx-auto ${leaderboardPhase ? "grid grid-cols-1" : "grid lg:grid-cols-[1fr_320px]"} gap-6 relative`}>
         <main className="bg-[#0d131c]/80 border border-slate-800 rounded-2xl p-6 md:p-8">
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
@@ -207,7 +205,6 @@ export default function GameRoom() {
                 {currentQuestion.options.map((option, idx) => {
                   const isSelected = selectedAnswer === option;
                   const isDisabled = Number(timeRemaining || 0) <= 0 || ["pending", "submitted"].includes(answerStatus);
-                  const result = answerResults[option];
                   const showCorrect = false;
                   const showWrong = false;
 
@@ -269,9 +266,11 @@ export default function GameRoom() {
           )}
         </main>
 
-        <aside className="bg-[#0d131c]/80 border border-slate-800 rounded-2xl p-6 max-h-[400px] lg:max-h-none overflow-y-auto">
-          <ScoreBoard players={leaderboard || []} />
-        </aside>
+        {!leaderboardPhase && (
+          <aside className="bg-[#0d131c]/80 border border-slate-800 rounded-2xl p-6 max-h-[400px] lg:max-h-none overflow-y-auto">
+            <ScoreBoard players={leaderboard || []} />
+          </aside>
+        )}
       </div>
     </div>
   );
