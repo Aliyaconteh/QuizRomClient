@@ -5,6 +5,7 @@ import {
   CheckCircle2,
   Clock3,
   Database,
+  Download,
   ListChecks,
   PlusCircle,
   Radio,
@@ -16,6 +17,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Footer from "../components/ui/Footer";
+import { useToast } from "../components/ui/ToastContext";
 
 // -------------------------------------------------------------------
 //  Data
@@ -81,14 +83,14 @@ const staggerContainer = {
 };
 
 // -------------------------------------------------------------------
-//  Reusable motion wrappers (keeps markup clean)
+//  Reusable motion wrappers
 // -------------------------------------------------------------------
 const MotionButton = motion.button;
 const MotionDiv = motion.div;
 const MotionSection = motion.section;
 
 // -------------------------------------------------------------------
-//  Card components – memoised for perf
+//  Card components – memoised for performance
 // -------------------------------------------------------------------
 const WorkflowCard = memo(function WorkflowCard({
   title,
@@ -130,7 +132,7 @@ const FeatureCard = memo(function FeatureCard({
       className="rounded-2xl border border-slate-800 bg-slate-900/40 p-5 backdrop-blur-sm transition-colors duration-200 hover:border-indigo-500/40"
     >
       <div className="mb-4 flex items-center gap-3">
-        <div className="grid h-10 w-10 place-items-center rounded-xl border border-slate-800 bg-slate-900 text-indigo-300 transition-colors group-hover:border-indigo-500/40">
+        <div className="grid h-10 w-10 place-items-center rounded-xl border border-slate-800 bg-slate-900 text-indigo-300">
           <Icon size={20} aria-hidden="true" />
         </div>
         <h3 className="font-extrabold">{title}</h3>
@@ -145,18 +147,63 @@ const FeatureCard = memo(function FeatureCard({
 // -------------------------------------------------------------------
 export default function Home() {
   const navigate = useNavigate();
+  const { addToast } = useToast();
   const prefersReducedMotion = useReducedMotion();
   const [mounted, setMounted] = useState(false);
+  const [installPrompt, setInstallPrompt] = useState(null);
+  const [isInstalled, setIsInstalled] = useState(() => {
+    if (typeof window === "undefined") return false;
+    return (
+      window.matchMedia("(display-mode: standalone)").matches ||
+      window.navigator.standalone === true
+    );
+  });
 
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 30);
     return () => clearTimeout(t);
   }, []);
 
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (event) => {
+      event.preventDefault();
+      setInstallPrompt(event);
+    };
+    const handleAppInstalled = () => {
+      setIsInstalled(true);
+      setInstallPrompt(null);
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    window.addEventListener("appinstalled", handleAppInstalled);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+      window.removeEventListener("appinstalled", handleAppInstalled);
+    };
+  }, []);
+
   const handleNavigation = useCallback(
     (path) => () => navigate(path),
     [navigate]
   );
+
+  const handleInstall = async () => {
+    if (!installPrompt) {
+      addToast(
+        "To install KuizRoom, open your browser menu and choose Install app or Add to Home Screen.",
+        { type: "info", duration: 6000 }
+      );
+      return;
+    }
+
+    installPrompt.prompt();
+    const { outcome } = await installPrompt.userChoice;
+    if (outcome === "accepted") {
+      setIsInstalled(true);
+    }
+    setInstallPrompt(null);
+  };
 
   // Respect user motion preference – skip initial mount fade if reduced motion
   const heroOpacity = mounted ? "opacity-100" : "opacity-0";
@@ -165,148 +212,173 @@ export default function Home() {
     : "transition-opacity duration-500";
 
   return (
-    <main className="relative overflow-hidden bg-slate-950 text-white">
-      {/* Subtle animated gradient background – decorative */}
+    <main className="relative min-h-screen bg-slate-950 text-white">
+      {/* Soft radial glow background */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
+        className="pointer-events-none absolute inset-0 overflow-hidden"
       >
         <div className="absolute -top-40 left-1/2 h-[600px] w-[600px] -translate-x-1/2 rounded-full bg-gradient-to-br from-indigo-900/20 to-purple-900/10 blur-3xl" />
+        <div className="absolute bottom-0 right-0 h-[400px] w-[400px] rounded-full bg-indigo-900/10 blur-3xl" />
       </div>
 
-      {/* HERO */}
-      <section className="border-b border-slate-800/80">
-        <div
-          className={`mx-auto max-w-3xl px-4 py-20 text-center sm:px-6 lg:py-28 ${heroOpacity} ${heroTransition}`}
-        >
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/90 px-4 py-2 text-sm font-semibold text-slate-200 backdrop-blur-sm">
-            <Sparkles size={16} className="text-indigo-300" aria-hidden="true" />
-            KuizRoom
-          </div>
-
-          <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
-            KuizRoom: Real-Time{" "}
-            <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Real-Time Multiplayer Quiz Platform
-            </span>
-          </h1>
-
-          <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-slate-400">
-             KuizRoom is a real-time multiplayer quiz application that allows
-      teachers, hosts, and learners to create quizzes, host live quiz
-      sessions, and participate using a room code. Participants answer
-      timed questions while scores and leaderboards are updated in real
-      time.
-          </p>
-
-          <div className="mt-8 flex flex-wrap justify-center gap-3">
-            <MotionButton
-              onClick={handleNavigation("/quizzes/create")}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.97 }}
-              className="inline-flex items-center gap-2 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 px-6 py-3 font-bold text-white shadow-md shadow-purple-500/20 transition-shadow duration-200 hover:shadow-lg hover:shadow-purple-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70"
-              aria-label="Create a new quiz"
-            >
-              Create Quiz
-            </MotionButton>
-           
-            <MotionButton
-              onClick={handleNavigation("/join-room")}
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.97 }}
-              className="rounded-full border border-slate-700 bg-slate-900/90 px-6 py-3 font-bold text-slate-200 backdrop-blur-sm transition-colors duration-200 hover:border-indigo-500/60 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70"
-              aria-label="Join a room using a code"
-            >
-              Join Room
-            </MotionButton>
-          </div>
-        </div>
-      </section>
-
-      {/* PURPOSE */}
-      <section className="border-b border-slate-800/80 bg-slate-900/20">
-        <div className="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6">
-          <p className="text-sm font-bold uppercase tracking-wide text-indigo-300">
-            About KuizRoom
-          </p>
-          <h2 className="mt-2 text-3xl font-extrabold tracking-tight">
-            A live quiz space for learning and evaluation
-          </h2>
-          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-400">
-            KuizRoom helps teachers, hosts, and learners run interactive quiz
-            sessions. It combines live questions, timed answers, server-validated
-            scoring, leaderboards, and optional AI-assisted practice. The project
-            also compares server-authoritative and optimistic synchronization to
-            study responsiveness and consistency in real-time web applications.
-          </p>
-        </div>
-      </section>
-
-      {/* WORKFLOWS */}
-      <MotionSection
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-80px" }}
-        variants={prefersReducedMotion ? {} : staggerContainer}
-        className="mx-auto max-w-7xl px-4 py-16 sm:px-6"
-      >
-        <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
-          <div>
-            <p className="text-sm font-bold uppercase tracking-wide text-indigo-300">
-              Main workflows
-            </p>
-            <h2 className="mt-2 text-3xl font-extrabold tracking-tight">
-              Move through the project
-            </h2>
-          </div>
-          <MotionButton
-            onClick={handleNavigation("/sync-analysis")}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
-            className="w-fit rounded-full border border-slate-700 bg-slate-900/90 px-4 py-2 font-bold text-slate-200 backdrop-blur-sm transition-colors duration-200 hover:border-indigo-500/60 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70"
-            aria-label="Open synchronization analysis dashboard"
+      <div className="relative">
+        {/* HERO (id="hero") */}
+        <section id="hero" className="border-b border-slate-800/80">
+          <div
+            className={`mx-auto max-w-3xl px-4 py-20 text-center sm:px-6 lg:py-28 ${heroOpacity} ${heroTransition}`}
           >
-            Open Analysis
-          </MotionButton>
-        </div>
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/90 px-4 py-2 text-sm font-semibold text-slate-200 backdrop-blur-sm">
+              <Sparkles size={16} className="text-indigo-300" aria-hidden="true" />
+              KuizRoom
+            </div>
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-          {workflows.map((item) => (
-            <WorkflowCard
-              key={item.title}
-              {...item}
-              onOpen={handleNavigation(item.path)}
-            />
-          ))}
-        </div>
-      </MotionSection>
+            <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
+              KuizRoom:{" "}
+              <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
+                Real-Time Multiplayer Quiz Platform
+              </span>
+            </h1>
 
-      {/* FEATURES */}
-      <MotionSection
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-80px" }}
-        variants={prefersReducedMotion ? {} : staggerContainer}
-        className="border-t border-slate-800/80 bg-slate-900/30"
-      >
-        <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
-          <div className="mb-8">
+            <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-slate-400">
+              KuizRoom is a real-time multiplayer quiz application that allows
+              teachers, hosts, and learners to create quizzes, host live quiz
+              sessions, and participate using a room code. Participants answer
+              timed questions while scores and leaderboards are updated in real
+              time.
+            </p>
+
+            <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+              <MotionButton
+                onClick={handleNavigation("/quizzes/create")}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.97 }}
+                className="inline-flex min-h-12 items-center gap-2 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 px-6 py-3 font-bold text-white shadow-md shadow-purple-500/20 transition-shadow duration-200 hover:shadow-lg hover:shadow-purple-500/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70"
+                aria-label="Create a new quiz"
+              >
+                Create Quiz
+              </MotionButton>
+
+              <MotionButton
+                onClick={handleNavigation("/join-room")}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.97 }}
+                className="min-h-12 rounded-full border border-slate-700 bg-slate-900/90 px-6 py-3 font-bold text-slate-200 backdrop-blur-sm transition-colors duration-200 hover:border-indigo-500/60 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70"
+                aria-label="Join a room using a code"
+              >
+                Join Room
+              </MotionButton>
+
+              {!isInstalled && (
+                <MotionButton
+                  onClick={handleInstall}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.97 }}
+                  className="inline-flex min-h-12 items-center gap-2 rounded-full border border-blue-700 bg-blue-600 px-6 py-3 font-bold text-white shadow-md shadow-blue-600/20 transition-colors duration-200 hover:border-blue-800 hover:bg-blue-700 hover:shadow-lg hover:shadow-blue-600/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500/70"
+                  aria-label="Install KuizRoom as an app"
+                >
+                  <span className="grid h-7 w-7 place-items-center rounded-full bg-white/15">
+                    <Download size={16} aria-hidden="true" />
+                  </span>
+                  <span>Install KuizRoom</span>
+                </MotionButton>
+              )}
+            </div>
+          </div>
+        </section>
+
+        
+          
+        
+
+        {/* ABOUT (id="about") */}
+        <section id="about" className="border-b border-slate-800/80 bg-slate-900/20">
+          <div className="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6">
             <p className="text-sm font-bold uppercase tracking-wide text-indigo-300">
-              System design
+              About KuizRoom
             </p>
             <h2 className="mt-2 text-3xl font-extrabold tracking-tight">
-              What the project demonstrates
+              A live quiz space for learning and evaluation
             </h2>
+            <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-400">
+              KuizRoom helps teachers, hosts, and learners run interactive quiz
+              sessions. It combines live questions, timed answers, server-validated
+              scoring, leaderboards, and optional AI-assisted practice. The project
+              also compares server-authoritative and optimistic synchronization to
+              study responsiveness and consistency in real-time web applications.
+            </p>
+          </div>
+        </section>
+
+        {/* WORKFLOWS (id="workflows") */}
+        <MotionSection
+          id="workflows"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={prefersReducedMotion ? {} : staggerContainer}
+          className="mx-auto max-w-7xl px-4 py-16 sm:px-6"
+        >
+          <div className="mb-8 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="text-sm font-bold uppercase tracking-wide text-indigo-300">
+                Main workflows
+              </p>
+              <h2 className="mt-2 text-3xl font-extrabold tracking-tight">
+                Move through the project
+              </h2>
+            </div>
+            <MotionButton
+              onClick={handleNavigation("/sync-analysis")}
+              whileHover={{ scale: 1.03 }}
+              whileTap={{ scale: 0.98 }}
+              className="w-fit rounded-full border border-slate-700 bg-slate-900/90 px-4 py-2 font-bold text-slate-200 backdrop-blur-sm transition-colors duration-200 hover:border-indigo-500/60 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/70"
+              aria-label="Open synchronization analysis dashboard"
+            >
+              Open Analysis
+            </MotionButton>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-            {features.map((feature) => (
-              <FeatureCard key={feature.title} {...feature} />
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            {workflows.map((item) => (
+              <WorkflowCard
+                key={item.title}
+                {...item}
+                onOpen={handleNavigation(item.path)}
+              />
             ))}
           </div>
-        </div>
-      </MotionSection>
-      <Footer />
+        </MotionSection>
+
+        {/* FEATURES (id="features") */}
+        <MotionSection
+          id="features"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-80px" }}
+          variants={prefersReducedMotion ? {} : staggerContainer}
+          className="border-t border-slate-800/80 bg-slate-900/30"
+        >
+          <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6">
+            <div className="mb-8">
+              <p className="text-sm font-bold uppercase tracking-wide text-indigo-300">
+                System design
+              </p>
+              <h2 className="mt-2 text-3xl font-extrabold tracking-tight">
+                What the project demonstrates
+              </h2>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+              {features.map((feature) => (
+                <FeatureCard key={feature.title} {...feature} />
+              ))}
+            </div>
+          </div>
+        </MotionSection>
+
+        <Footer />
+      </div>
     </main>
   );
 }
