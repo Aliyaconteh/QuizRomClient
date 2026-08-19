@@ -187,13 +187,16 @@ export default function Home() {
           <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
             KuizRoom: Real-Time{" "}
             <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Multiplayer Quizzes
+              Real-Time Multiplayer Quiz Platform
             </span>
           </h1>
 
           <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-slate-400">
-            KuizRoom is a real-time multiplayer quiz platform for creating quizzes,
-            hosting live rooms, joining with a room code, and tracking fair scores.
+             KuizRoom is a real-time multiplayer quiz application that allows
+      teachers, hosts, and learners to create quizzes, host live quiz
+      sessions, and participate using a room code. Participants answer
+      timed questions while scores and leaderboards are updated in real
+      time.
           </p>
 
           <div className="mt-8 flex flex-wrap justify-center gap-3">
