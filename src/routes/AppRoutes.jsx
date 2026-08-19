@@ -1,4 +1,5 @@
-import { BrowserRouter, Navigate, Routes, Route } from "react-router-dom";
+import { useEffect } from "react";
+import { BrowserRouter, Navigate, Routes, Route, useLocation } from "react-router-dom";
 
 import Home from "../pages/Home";
 import MainLayout from "../layouts/MainLayout";
@@ -16,14 +17,29 @@ import Leaderboard from "../features/leaderboard/pages/Leaderboard";
 import QuizList from "../features/quizzes/pages/QuizList";
 import CreateQuiz from "../features/quizzes/pages/CreateQuiz";
 import AIPractice from "../features/ai/pages/AIPractice";
+import PrivacyPolicy from "../pages/privacy-Policy";
+import TermsAndServices from "../pages/Terms and Services";
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return null;
+}
 
 export default function AppRoutes() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <MainLayout>
         <Routes>
 
         <Route path="/" element={<Home />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+        <Route path="/terms-and-services" element={<TermsAndServices />} />
 
         <Route
           path="/create-room"

@@ -15,6 +15,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Footer from "../components/ui/Footer";
 
 // -------------------------------------------------------------------
 //  Data
@@ -283,6 +284,7 @@ export default function Home() {
           </div>
         </div>
       </MotionSection>
+      <Footer />
     </main>
   );
 }
