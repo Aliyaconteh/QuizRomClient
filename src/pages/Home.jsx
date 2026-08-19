@@ -181,19 +181,19 @@ export default function Home() {
         >
           <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-900/90 px-4 py-2 text-sm font-semibold text-slate-200 backdrop-blur-sm">
             <Sparkles size={16} className="text-indigo-300" aria-hidden="true" />
-            Welcome to KuizRoom
+            KuizRoom
           </div>
 
           <h1 className="text-4xl font-extrabold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
-            Multiplayer Quiz{" "}
+            KuizRoom: Real-Time{" "}
             <span className="bg-gradient-to-r from-blue-400 to-purple-400 bg-clip-text text-transparent">
-              Platform
+              Multiplayer Quizzes
             </span>
           </h1>
 
           <p className="mx-auto mt-6 max-w-xl text-lg leading-8 text-slate-400">
-            Create quizzes, host live rooms, join with a room code, and track
-            scores in real time.
+            KuizRoom is a real-time multiplayer quiz platform for creating quizzes,
+            hosting live rooms, joining with a room code, and tracking fair scores.
           </p>
 
           <div className="mt-8 flex flex-wrap justify-center gap-3">
@@ -217,6 +217,25 @@ export default function Home() {
               Join Room
             </MotionButton>
           </div>
+        </div>
+      </section>
+
+      {/* PURPOSE */}
+      <section className="border-b border-slate-800/80 bg-slate-900/20">
+        <div className="mx-auto max-w-4xl px-4 py-14 text-center sm:px-6">
+          <p className="text-sm font-bold uppercase tracking-wide text-indigo-300">
+            About KuizRoom
+          </p>
+          <h2 className="mt-2 text-3xl font-extrabold tracking-tight">
+            A live quiz space for learning and evaluation
+          </h2>
+          <p className="mx-auto mt-5 max-w-2xl text-base leading-7 text-slate-400">
+            KuizRoom helps teachers, hosts, and learners run interactive quiz
+            sessions. It combines live questions, timed answers, server-validated
+            scoring, leaderboards, and optional AI-assisted practice. The project
+            also compares server-authoritative and optimistic synchronization to
+            study responsiveness and consistency in real-time web applications.
+          </p>
         </div>
       </section>
 
